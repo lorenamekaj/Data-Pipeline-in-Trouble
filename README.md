@@ -29,7 +29,7 @@ Make sure you have the following installed:
 ### Step 1 — Clone the repo
 
 ```bash
-git clone https://github.com/Erzaaademi/pipeline-stabilization-project.git
+git clone https://github.com/lorenamekaj/Data-Pipeline-in-Trouble.git
 cd pipeline-stabilization-project
 ```
 
