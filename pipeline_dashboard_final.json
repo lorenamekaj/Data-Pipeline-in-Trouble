@@ -1,0 +1,404 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_POSTGRESQL",
+      "label": "PostgreSQL",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "postgres",
+      "pluginName": "PostgreSQL"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "datasource",
+      "id": "postgres",
+      "name": "PostgreSQL",
+      "version": "1.0.0"
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "10.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "barchart",
+      "name": "Bar chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "piechart",
+      "name": "Pie chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": []
+  },
+  "description": "Data Pipeline Health Monitor - Project 3 Demo",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          },
+          "mappings": [
+            { "options": { "failure": { "color": "red", "index": 0, "text": "FAILED" }, "success": { "color": "green", "index": 1, "text": "SUCCESS" } }, "type": "value" }
+          ]
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 5, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "/^status$/", "values": false }, "textMode": "value_and_name" },
+      "title": "Last Pipeline Run Status",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+          "rawSql": "SELECT run_date, status, execution_time_seconds, rows_processed FROM pipeline_runs ORDER BY run_date DESC LIMIT 1;",
+          "format": "table",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 1 },
+              { "color": "red", "value": 3 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 5, "x": 5, "y": 0 },
+      "id": 2,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "title": "Open Alerts",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+          "rawSql": "SELECT COUNT(*) AS open_alerts FROM pipeline_alerts WHERE resolved = FALSE;",
+          "format": "table",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 10 },
+              { "color": "red", "value": 15 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 5, "x": 10, "y": 0 },
+      "id": 3,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "title": "Story Points Remaining",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+          "rawSql": "SELECT SUM(story_points) AS points_remaining FROM kanban_tickets WHERE column_name != 'Done';",
+          "format": "table",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 9, "x": 15, "y": 0 },
+      "id": 12,
+      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "/^failure_rate_pct$/", "values": true }, "textMode": "auto" },
+      "title": "Monday Failure Rate (%)",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+          "rawSql": "SELECT run_day, ROUND(100.0 * SUM(CASE WHEN status = 'failure' THEN 1 ELSE 0 END) / COUNT(*), 1) AS failure_rate_pct FROM pipeline_runs GROUP BY run_day ORDER BY failure_rate_pct DESC;",
+          "format": "table",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "failure" }, "properties": [ { "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } } ] },
+          { "matcher": { "id": "byName", "options": "success" }, "properties": [ { "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } } ] }
+        ]
+      },
+      "gridPos": { "h": 8, "w": 14, "x": 0, "y": 4 },
+      "id": 4,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
+      "title": "Pipeline Run Status Over Time",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+          "rawSql": "SELECT run_date AS time, CASE WHEN status = 'success' THEN 1 ELSE 0 END AS success, CASE WHEN status = 'failure' THEN 1 ELSE 0 END AS failure FROM pipeline_runs ORDER BY run_date;",
+          "format": "time_series",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "orange", "value": 400 }, { "color": "red", "value": 700 } ] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 10, "x": 14, "y": 4 },
+      "id": 5,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom" } },
+      "title": "Failure Rate by Day of Week (%)",
+      "type": "barchart",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+          "rawSql": "SELECT run_day, ROUND(100.0 * SUM(CASE WHEN status = 'failure' THEN 1 ELSE 0 END) / COUNT(*), 1) AS failure_rate_pct FROM pipeline_runs GROUP BY run_day ORDER BY failure_rate_pct DESC;",
+          "format": "table",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "execution_time_seconds" }, "properties": [ { "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }, { "id": "custom.thresholds", "value": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 800 } ] } } ] }
+        ]
+      },
+      "gridPos": { "h": 8, "w": 14, "x": 0, "y": 12 },
+      "id": 6,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
+      "title": "Pipeline Execution Time (seconds)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+          "rawSql": "SELECT run_date AS time, execution_time_seconds FROM pipeline_runs ORDER BY run_date;",
+          "format": "time_series",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "failure" }, "properties": [ { "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } } ] },
+          { "matcher": { "id": "byName", "options": "success" }, "properties": [ { "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } } ] }
+        ]
+      },
+      "gridPos": { "h": 8, "w": 10, "x": 14, "y": 12 },
+      "id": 7,
+      "options": { "displayLabels": ["percent"], "legend": { "calcs": [], "displayMode": "list", "placement": "bottom" }, "pieType": "pie", "tooltip": { "mode": "single" } },
+      "title": "Overall Success vs Failure",
+      "type": "piechart",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+          "rawSql": "SELECT status, COUNT(*) AS count FROM pipeline_runs GROUP BY status;",
+          "format": "table",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "custom": { "lineWidth": 2, "fillOpacity": 10 } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "rows_received" }, "properties": [ { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } } ] },
+          { "matcher": { "id": "byName", "options": "rows_processed" }, "properties": [ { "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } } ] },
+          { "matcher": { "id": "byName", "options": "rows_failed" }, "properties": [ { "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } } ] }
+        ]
+      },
+      "gridPos": { "h": 8, "w": 14, "x": 0, "y": 20 },
+      "id": 8,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi" } },
+      "title": "Data Volume — Received vs Processed vs Failed",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+          "rawSql": "SELECT run_date AS time, rows_received, rows_processed, rows_failed FROM data_volume ORDER BY run_date;",
+          "format": "time_series",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" } },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 10, "x": 14, "y": 20 },
+      "id": 9,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom" } },
+      "title": "Average Data Volume by Day",
+      "type": "barchart",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+          "rawSql": "SELECT run_day, ROUND(AVG(rows_received), 0) AS avg_rows_received FROM data_volume GROUP BY run_day ORDER BY avg_rows_received DESC;",
+          "format": "table",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" } },
+        "overrides": []
+      },
+      "gridPos": { "h": 7, "w": 10, "x": 0, "y": 28 },
+      "id": 10,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom" } },
+      "title": "Kanban — Tickets Per Column",
+      "type": "barchart",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+          "rawSql": "SELECT column_name, COUNT(*) AS ticket_count FROM kanban_tickets GROUP BY column_name ORDER BY CASE column_name WHEN 'To Do' THEN 1 WHEN 'In Progress' THEN 2 WHEN 'On Hold' THEN 3 WHEN 'Ready for Review' THEN 4 WHEN 'In Review' THEN 5 WHEN 'Done' THEN 6 END;",
+          "format": "table",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "status" }, "properties": [ { "id": "custom.displayMode", "value": "color-background" }, { "id": "mappings", "value": [ { "options": { "Done": { "color": "green", "index": 0 }, "In Progress": { "color": "blue", "index": 1 }, "To Do": { "color": "grey", "index": 2 }, "On Hold": { "color": "orange", "index": 3 }, "Ready for Review": { "color": "purple", "index": 4 } }, "type": "value" } ] } ] }
+        ]
+      },
+      "gridPos": { "h": 7, "w": 14, "x": 10, "y": 28 },
+      "id": 11,
+      "options": { "footer": { "show": false }, "showHeader": true, "sortBy": [ { "desc": false, "displayName": "ticket_id" } ] },
+      "title": "Sprint 1 — Ticket Tracker",
+      "type": "table",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+          "rawSql": "SELECT ticket_id, title, column_name AS status, assigned_to, story_points, updated_date FROM kanban_tickets ORDER BY ticket_id;",
+          "format": "table",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "severity" }, "properties": [ { "id": "custom.displayMode", "value": "color-background" }, { "id": "mappings", "value": [ { "options": { "critical": { "color": "red", "index": 0 }, "warning": { "color": "orange", "index": 1 }, "info": { "color": "blue", "index": 2 } }, "type": "value" } ] } ] },
+          { "matcher": { "id": "byName", "options": "status" }, "properties": [ { "id": "custom.displayMode", "value": "color-background" }, { "id": "mappings", "value": [ { "options": { "Open": { "color": "red", "index": 0 }, "Resolved": { "color": "green", "index": 1 } }, "type": "value" } ] } ] }
+        ]
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 35 },
+      "id": 13,
+      "options": { "footer": { "show": false }, "showHeader": true, "sortBy": [ { "desc": true, "displayName": "alert_date" } ] },
+      "title": "Alert History",
+      "type": "table",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "YOUR_DATASOURCE_UID" },
+          "rawSql": "SELECT alert_date, alert_type, severity, message, CASE WHEN resolved THEN 'Resolved' ELSE 'Open' END AS status FROM pipeline_alerts ORDER BY alert_date DESC;",
+          "format": "table",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "tags": ["pipeline", "data-engineering", "project3"],
+  "templating": { "list": [] },
+  "time": { "from": "now-60d", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Data Pipeline Health Monitor",
+  "uid": "pipeline-monitor-001",
+  "version": 1
+}
